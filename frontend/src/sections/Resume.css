@@ -1,0 +1,81 @@
+.resume-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 50px;
+    margin-bottom: 60px;
+}
+
+.resume-column-title {
+    font-size: 1.6rem;
+    margin-bottom: 32px;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.resume-column-title i {
+    color: var(--accent-primary);
+    font-size: 1.8rem;
+}
+
+.resume-item {
+    position: relative;
+    padding-left: 28px;
+    margin-bottom: 40px;
+}
+
+.resume-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--accent-gradient);
+    border-radius: 3px;
+}
+
+.resume-year {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent-primary);
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.resume-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.resume-company {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+.resume-description {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+
+.resume-download {
+    text-align: center;
+    margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+    .resume-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .resume-column-title {
+        font-size: 1.4rem;
+    }
+}
