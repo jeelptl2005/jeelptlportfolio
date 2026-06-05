@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+import resend
 import os
 from datetime import datetime
 from dotenv import load_dotenv
@@ -11,6 +10,9 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app, origins="*")
+
+# Resend
+resend.api_key = os.environ.get("RESEND_API_KEY")
 
 # MongoDB
 MONGODB_URI = os.environ.get("MONGODB_URI")
@@ -25,47 +27,42 @@ except Exception as e:
 
 def send_emails(name, email, subject, message):
     try:
-        sg = SendGridAPIClient(os.environ.get("SENDGRID_API_KEY"))
-
         # Email to user
-        user_html = f"""
-        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; background: white; border-radius: 10px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-            <h2 style="color: #3b82f6;">Thank You, {name}!</h2>
-            <p>I have received your message regarding <strong>"{subject}"</strong>.</p>
-            <p>I will get back to you within <strong>24-48 hours</strong>.</p>
-            <div style="background: #f0fdf4; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
-                <p><strong>Your Message:</strong></p>
-                <p>{message}</p>
+        resend.Emails.send({
+            "from": "Jeel Patel <onboarding@resend.dev>",
+            "to": email,
+            "subject": "Message Received - Jeel Portfolio",
+            "html": f"""
+            <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; background: white; border-radius: 10px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <h2 style="color: #3b82f6;">Thank You, {name}!</h2>
+                <p>I have received your message regarding <strong>"{subject}"</strong>.</p>
+                <p>I will get back to you within <strong>24-48 hours</strong>.</p>
+                <div style="background: #f0fdf4; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
+                    <p><strong>Your Message:</strong></p>
+                    <p>{message}</p>
+                </div>
+                <p style="color: #666;">Best regards,<br><strong>Jeel Patel</strong><br>Data Science Student | Parul University</p>
             </div>
-            <p style="color: #666;">Best regards,<br><strong>Jeel Patel</strong><br>Data Science Student | Parul University</p>
-        </div>
-        """
-        user_msg = Mail(
-            from_email="noreply@sendgrid.net",
-            to_emails=email,
-            subject="Message Received - Jeel Portfolio",
-            html_content=user_html
-        )
-        sg.send(user_msg)
+            """
+        })
 
         # Email to owner
-        owner_html = f"""
-        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; background: white; border-radius: 10px; padding: 30px;">
-            <h2 style="color: #3b82f6;">New Message from Portfolio!</h2>
-            <p><strong>Name:</strong> {name}</p>
-            <p><strong>Email:</strong> {email}</p>
-            <p><strong>Subject:</strong> {subject}</p>
-            <p><strong>Message:</strong> {message}</p>
-            <p><strong>Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
-        </div>
-        """
-        owner_msg = Mail(
-            from_email="noreply@sendgrid.net",
-            to_emails=os.environ.get("GMAIL"),
-            subject=f"New Contact: {subject} from {name}",
-            html_content=owner_html
-        )
-        sg.send(owner_msg)
+        resend.Emails.send({
+            "from": "Portfolio Contact <onboarding@resend.dev>",
+            "to": os.environ.get("GMAIL"),
+            "subject": f"New Contact: {subject} from {name}",
+            "html": f"""
+            <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; background: white; border-radius: 10px; padding: 30px;">
+                <h2 style="color: #3b82f6;">New Message from Portfolio!</h2>
+                <p><strong>Name:</strong> {name}</p>
+                <p><strong>Email:</strong> {email}</p>
+                <p><strong>Subject:</strong> {subject}</p>
+                <p><strong>Message:</strong> {message}</p>
+                <p><strong>Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+            </div>
+            """
+        })
+
         return True
 
     except Exception as e:
