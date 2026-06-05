@@ -30,7 +30,7 @@ def send_emails(name, email, subject, message):
         # Email to user
         resend.Emails.send({
             "from": "Jeel Patel <onboarding@resend.dev>",
-            "to": email,
+            "to": os.environ.get("GMAIL"),
             "subject": "Message Received - Jeel Portfolio",
             "html": f"""
             <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; background: white; border-radius: 10px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
