@@ -41,7 +41,7 @@ def send_emails(name, email, subject, message):
         </div>
         """
         user_msg = Mail(
-            from_email=os.environ.get("GMAIL"),
+            from_email="noreply@sendgrid.net",
             to_emails=email,
             subject="Message Received - Jeel Portfolio",
             html_content=user_html
@@ -60,7 +60,7 @@ def send_emails(name, email, subject, message):
         </div>
         """
         owner_msg = Mail(
-            from_email=os.environ.get("GMAIL"),
+            from_email="noreply@sendgrid.net",
             to_emails=os.environ.get("GMAIL"),
             subject=f"New Contact: {subject} from {name}",
             html_content=owner_html
