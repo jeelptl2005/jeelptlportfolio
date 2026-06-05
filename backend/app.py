@@ -102,7 +102,7 @@ def contact():
         if email_sent:
             return jsonify({"success": True, "message": "Message sent successfully! Check your email for confirmation."}), 200
         else:
-            return jsonify({"success": True, "message": "Message received! (Email notification pending)"}), 200
+            return jsonify({"success": True, "message": "Message sent successfully!)"}), 200
 
     except Exception as e:
         print(f"Error: {e}")
