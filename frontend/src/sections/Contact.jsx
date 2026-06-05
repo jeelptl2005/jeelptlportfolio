@@ -14,9 +14,9 @@ export default function Contact() {
         setStatus('loading');
 
         try {
-            // Use full URL for backend
-            const API_URL = process.env.NODE_ENV === 'production'
-                ? '/api/contact'
+            // Backend URL from env variable
+            const API_URL = process.env.REACT_APP_API_URL
+                ? `${process.env.REACT_APP_API_URL}/api/contact`
                 : 'http://localhost:5000/api/contact';
 
             const res = await fetch(API_URL, {
@@ -39,23 +39,18 @@ export default function Contact() {
         } catch (error) {
             console.error('Fetch error:', error);
             setStatus('error');
-            setMsg('Network error. Please make sure backend is running on port 5000');
+            setMsg('Network error. Please try again later.');
         }
     };
 
     const containerVariants = {
         hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: { staggerChildren: 0.2, delayChildren: 0.2 },
-        },
+        visible: { opacity: 1, transition: { staggerChildren: 0.2, delayChildren: 0.2 } },
     };
-
     const itemVariants = {
         hidden: { opacity: 0, x: -30 },
         visible: { opacity: 1, x: 0, transition: { duration: 0.5 } },
     };
-
     const formVariants = {
         hidden: { opacity: 0, x: 30 },
         visible: { opacity: 1, x: 0, transition: { duration: 0.5 } },
@@ -84,24 +79,15 @@ export default function Contact() {
                     <div className="contact-details">
                         <motion.div className="contact-item" whileHover={{ x: 5 }}>
                             <div className="contact-icon"><i className="fas fa-envelope" /></div>
-                            <div>
-                                <h4>Email</h4>
-                                <p>jeelptl2005@gmail.com</p>
-                            </div>
+                            <div><h4>Email</h4><p>jeelptl2005@gmail.com</p></div>
                         </motion.div>
                         <motion.div className="contact-item" whileHover={{ x: 5 }}>
                             <div className="contact-icon"><i className="fas fa-phone" /></div>
-                            <div>
-                                <h4>Phone</h4>
-                                <p>+91 9313464150</p>
-                            </div>
+                            <div><h4>Phone</h4><p>+91 9313464150</p></div>
                         </motion.div>
                         <motion.div className="contact-item" whileHover={{ x: 5 }}>
                             <div className="contact-icon"><i className="fas fa-map-marker-alt" /></div>
-                            <div>
-                                <h4>Location</h4>
-                                <p>Gujarat, India</p>
-                            </div>
+                            <div><h4>Location</h4><p>Gujarat, India</p></div>
                         </motion.div>
                     </div>
                 </motion.div>
@@ -110,51 +96,19 @@ export default function Contact() {
                     <form className="contact-form" onSubmit={handleSubmit}>
                         <div className="form-group">
                             <label htmlFor="name">Your Name</label>
-                            <input
-                                id="name"
-                                name="name"
-                                type="text"
-                                value={form.name}
-                                onChange={handleChange}
-                                required
-                                disabled={status === 'loading'}
-                            />
+                            <input id="name" name="name" type="text" value={form.name} onChange={handleChange} required disabled={status === 'loading'} />
                         </div>
                         <div className="form-group">
                             <label htmlFor="email">Your Email</label>
-                            <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                value={form.email}
-                                onChange={handleChange}
-                                required
-                                disabled={status === 'loading'}
-                            />
+                            <input id="email" name="email" type="email" value={form.email} onChange={handleChange} required disabled={status === 'loading'} />
                         </div>
                         <div className="form-group">
                             <label htmlFor="subject">Subject</label>
-                            <input
-                                id="subject"
-                                name="subject"
-                                type="text"
-                                value={form.subject}
-                                onChange={handleChange}
-                                required
-                                disabled={status === 'loading'}
-                            />
+                            <input id="subject" name="subject" type="text" value={form.subject} onChange={handleChange} required disabled={status === 'loading'} />
                         </div>
                         <div className="form-group">
                             <label htmlFor="message">Message</label>
-                            <textarea
-                                id="message"
-                                name="message"
-                                rows="5"
-                                value={form.message}
-                                onChange={handleChange}
-                                required
-                                disabled={status === 'loading'}
-                            />
+                            <textarea id="message" name="message" rows="5" value={form.message} onChange={handleChange} required disabled={status === 'loading'} />
                         </div>
 
                         <motion.button
