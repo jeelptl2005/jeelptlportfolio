@@ -24,9 +24,13 @@ mail = Mail(app)
 
 # MongoDB
 MONGODB_URI = os.environ.get("MONGODB_URI")
-client = MongoClient(MONGODB_URI)
-db = client["portfolio"]
-messages_collection = db["messages"]
+try:
+    client = MongoClient(MONGODB_URI, serverSelectionTimeoutMS=5000)
+    db = client["portfolio"]
+    messages_collection = db["messages"]
+except Exception as e:
+    print(f"MongoDB connection error: {e}")
+    messages_collection = None
 
 
 def send_emails(name, email, subject, message):
@@ -111,7 +115,8 @@ def contact():
                 "created_at": datetime.now().isoformat(),
                 "read": False,
             }
-            messages_collection.insert_one(message_doc)
+            if messages_collection is not None:
+                messages_collection.insert_one(message_doc)
             print(f"Saved to MongoDB: {name}")
         except Exception as mongo_error:
             print(f"MongoDB error: {mongo_error}")
