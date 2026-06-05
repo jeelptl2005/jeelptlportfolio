@@ -4,3 +4,4 @@ flask-mail
 pymongo
 python-dotenv
 gunicorn
+sendgrid
