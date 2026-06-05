@@ -9,7 +9,11 @@ from pymongo import MongoClient
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)  # Allow all origins for development
+
+CORS(app, origins=[
+    "http://localhost:3000",
+    os.environ.get("FRONTEND_URL", "*")
+])
 
 # Email Configuration
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
@@ -21,26 +25,19 @@ app.config["MAIL_DEFAULT_SENDER"] = os.environ.get("GMAIL", "")
 
 mail = Mail(app)
 
-# MongoDB Configuration
-MONGODB_URI = os.environ.get(
-    "MONGODB_URI", "mongodb+srv://jeelptl0705:msd_07@portfolio.q174pfv.mongodb.net/"
-)
+# MongoDB
+MONGODB_URI = os.environ.get("MONGODB_URI")
 client = MongoClient(MONGODB_URI)
 db = client["portfolio"]
 messages_collection = db["messages"]
 
 
 def send_emails(name, email, subject, message):
-    """Send confirmation email to user and notification to owner."""
     try:
-        # Email to user
         user_html = f"""
         <!DOCTYPE html>
         <html>
-        <head>
-            <meta charset="UTF-8">
-            <title>Message Received</title>
-        </head>
+        <head><meta charset="UTF-8"></head>
         <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 40px;">
             <div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 10px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                 <h2 style="color: #3b82f6; margin-top: 0;">Thank You, {name}! 🙏</h2>
@@ -56,22 +53,17 @@ def send_emails(name, email, subject, message):
         </body>
         </html>
         """
-
         user_msg = Message(
-            subject=f"✨ Message Received - Jeel Portfolio",
+            subject="Message Received - Jeel Portfolio",
             recipients=[email],
             html=user_html,
         )
         mail.send(user_msg)
 
-        # Email to owner
         owner_html = f"""
         <!DOCTYPE html>
         <html>
-        <head>
-            <meta charset="UTF-8">
-            <title>New Contact Form Submission</title>
-        </head>
+        <head><meta charset="UTF-8"></head>
         <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 40px;">
             <div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 10px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                 <h2 style="color: #3b82f6; margin-top: 0;">📬 New Message from Portfolio!</h2>
@@ -89,14 +81,12 @@ def send_emails(name, email, subject, message):
         </body>
         </html>
         """
-
         owner_msg = Message(
-            subject=f"🔔 New Contact: {subject} from {name}",
+            subject=f"New Contact: {subject} from {name}",
             recipients=[os.environ.get("PORTFOLIO_EMAIL", "jeelptl2005@gmail.com")],
             html=owner_html,
         )
         mail.send(owner_msg)
-
         return True
     except Exception as e:
         print(f"Email error: {e}")
@@ -105,23 +95,16 @@ def send_emails(name, email, subject, message):
 
 @app.route("/api/contact", methods=["POST"])
 def contact():
-    """Handle contact form submission"""
     try:
         data = request.get_json()
-        print(f"Received: {data}")
-
         name = data.get("name", "").strip()
         email = data.get("email", "").strip()
         subject = data.get("subject", "").strip()
         message = data.get("message", "").strip()
 
         if not all([name, email, subject, message]):
-            return (
-                jsonify({"success": False, "message": "All fields are required."}),
-                400,
-            )
+            return jsonify({"success": False, "message": "All fields are required."}), 400
 
-        # Save to MongoDB
         try:
             message_doc = {
                 "name": name,
@@ -136,72 +119,27 @@ def contact():
         except Exception as mongo_error:
             print(f"MongoDB error: {mongo_error}")
 
-        # Send emails
         email_sent = send_emails(name, email, subject, message)
 
         if email_sent:
-            return (
-                jsonify(
-                    {
-                        "success": True,
-                        "message": "Message sent successfully! Check your email for confirmation.",
-                    }
-                ),
-                200,
-            )
+            return jsonify({"success": True, "message": "Message sent successfully! Check your email for confirmation."}), 200
         else:
-            return (
-                jsonify(
-                    {
-                        "success": True,
-                        "message": "Message received! (Email notification pending)",
-                    }
-                ),
-                200,
-            )
+            return jsonify({"success": True, "message": "Message received! (Email notification pending)"}), 200
 
     except Exception as e:
         print(f"Error: {e}")
-        return (
-            jsonify(
-                {
-                    "success": False,
-                    "message": "An error occurred. Please try again later.",
-                }
-            ),
-            500,
-        )
+        return jsonify({"success": False, "message": "An error occurred. Please try again later."}), 500
 
 
 @app.route("/api/health", methods=["GET"])
 def health():
-    """Health check endpoint"""
-    return (
-        jsonify(
-            {
-                "status": "healthy",
-                "timestamp": datetime.now().isoformat(),
-                "mongodb": (
-                    "connected" if messages_collection is not None else "disconnected"
-                ),
-            }
-        ),
-        200,
-    )
+    return jsonify({"status": "healthy", "timestamp": datetime.now().isoformat()}), 200
 
 
 @app.route("/api/test", methods=["GET"])
 def test():
-    """Test endpoint"""
     return jsonify({"message": "API is working!", "status": "ok"}), 200
 
 
 if __name__ == "__main__":
-    print("\n" + "=" * 50)
-    print("🚀 Flask Backend Server")
-    print("📍 Running on: http://localhost:5000")
-    print("📮 API Endpoint: http://localhost:5000/api/contact")
-    print("� Test: http://localhost:5000/api/test")
-    print("� Health: http://localhost:5000/api/health")
-    print("=" * 50 + "\n")
     app.run(debug=True, host="0.0.0.0", port=5000)
