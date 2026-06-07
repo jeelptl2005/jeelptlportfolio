@@ -6,7 +6,7 @@ export default function Home() {
     const contentRef = useRef(null);
 
     // Typing effect states
-    const roles = ["Data Analyst", "Data Scientist", "ML Engineer", "AI Engineer"];
+    const roles = ["Data Analyst", "FARM Stack Developer", "ML Engineer", "AI Engineer"];
     const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
     const [currentText, setCurrentText] = useState("");
     const [isDeleting, setIsDeleting] = useState(false);
