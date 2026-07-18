@@ -72,7 +72,7 @@ const projects = [
         year: '2026',
         desc: 'ML-powered app predicting house sale prices from property features like quality, area, and garage capacity, with per-feature price impact breakdown.',
         tech: ['React', 'FastAPI', 'Pandas', 'NumPy', 'Scikit-learn', 'ElasticNet Regression'],
-        demo: 'http://jp-housepredictor.versel.app',
+        demo: 'https://jp-housepredictor.vercel.app',
         code: 'https://github.com/jeelptl2005/DATA-SCIENCE/tree/main/HousePred',
     },
 ];
