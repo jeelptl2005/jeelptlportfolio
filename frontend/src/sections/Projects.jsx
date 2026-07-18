@@ -66,6 +66,15 @@ const projects = [
         demo: 'https://github.com/jeelptl2005/DATA-SCIENCE/blob/main/Supply%20Chain%20Analysis/SupplyChain.ipynb',
         code: 'https://github.com/jeelptl2005/DATA-SCIENCE/tree/main/Supply%20Chain%20Analysis',
     },
+    {
+        num: '08',
+        title: 'House Price Predictor',
+        year: '2026',
+        desc: 'An end-to-end machine learning web app that predicts house sale prices based on key property features like overall quality, living area, garage capacity, and basement size. Trained multiple regression models (Linear, Lasso, Ridge, ElasticNet) with cross-validation and automatically selected the best performer. The app also breaks down each prediction with a feature-impact explanation, showing how much each input raised or lowered the estimated price compared to a baseline "typical" house.',
+        tech: ['React', 'FastAPI', 'Pandas', 'NumPy', 'Scikit-learn', 'ElasticNet Regression'],
+        demo: 'http://jp-housepredictor.versel.app',
+        code: 'https://github.com/jeelptl2005/DATA-SCIENCE/tree/main/HousePred',
+    },
 ];
 
 function ProjectCard({ project, index, isInView }) {
